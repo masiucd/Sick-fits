@@ -1,4 +1,5 @@
 import type {MetaFunction} from "@remix-run/node";
+import {db, fishes} from "~/db/db";
 
 export const meta: MetaFunction = () => {
   return [
@@ -6,6 +7,12 @@ export const meta: MetaFunction = () => {
     {name: "description", content: "Welcome to Remix!"},
   ];
 };
+
+export async function loader() {
+  const res = await db.select().from(fishes).all();
+  console.log("res", res);
+  return null;
+}
 
 export default function Index() {
   return (

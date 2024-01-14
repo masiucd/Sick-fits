@@ -22,9 +22,11 @@ module.exports = {
 
   // Base config
   extends: ["eslint:recommended", "plugin:tailwindcss/recommended"],
-  rules: {
-    "no-console": "warn",
-  },
+  // rules: {
+  // "no-console": "warn",
+  // "prefer-const": 0,
+  // },
+
   overrides: [
     // React
     {
@@ -82,4 +84,8 @@ module.exports = {
       },
     },
   ],
+  rules: {
+    "no-console": "warn",
+    "prefer-const": 0,
+  },
 };
