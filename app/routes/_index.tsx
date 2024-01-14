@@ -1,9 +1,10 @@
 import type {
-  LoaderFunction,
+  ActionFunction,
+  ActionFunctionArgs,
   LoaderFunctionArgs,
   MetaFunction,
 } from "@remix-run/node";
-import {Form, useFetcher, useLoaderData} from "@remix-run/react";
+import {useFetcher} from "@remix-run/react";
 import {db} from "~/db/db";
 import {FishesSchema, fishes} from "~/db/fishes";
 
@@ -14,7 +15,36 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export async function loader() {
+export async function action({request}: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const name = formData.get("name");
+  const species = formData.get("species");
+  const description = formData.get("description");
+  const image = formData.get("image");
+  const state = formData.get("state");
+  if (
+    typeof name !== "string" ||
+    typeof species !== "string" ||
+    typeof description !== "string" ||
+    typeof image !== "string" ||
+    typeof state !== "string"
+  ) {
+    return new Response("Invalid form data", {status: 400});
+  }
+
+  const newFish = {
+    name,
+    species,
+    description,
+    image,
+    state,
+  };
+  console.log("newFish", newFish);
+  await db.insert(fishes).values(newFish);
+  return null;
+}
+
+export async function loader({request, params}: LoaderFunctionArgs) {
   const rows = await db
     .select({
       id: fishes.id,
@@ -22,6 +52,7 @@ export async function loader() {
       species: fishes.species,
       description: fishes.description,
       image: fishes.image,
+      state: fishes.state,
     })
     .from(fishes);
   return FishesSchema.parse(rows);
@@ -51,35 +82,51 @@ export default function Index() {
           <fetcher.Form method="post">
             <fieldset className="flex flex-col gap-2">
               <div className="flex">
-                <div>
+                <div className="flex flex-col">
                   <label htmlFor="name">Name</label>
-                  <input type="text" id="name" name="name" />
+                  <input type="text" id="name" name="name" required />
                 </div>
 
-                <div>
+                <div className="flex flex-col">
                   <label htmlFor="species">Species</label>
-                  <input type="text" id="species" name="species" />
+                  <select name="species" id="species" required>
+                    <option defaultChecked value="shell">
+                      Shell
+                    </option>
+                    <option value="fish">Fish</option>
+                    <option value="crab">Crab</option>
+                    <option value="lobster">Lobster</option>
+                  </select>
                 </div>
 
-                <div>
-                  <label htmlFor="fresh">Fresh</label>
-                  <input type="radio" id="fresh" name="state" value="fresh" />
-                </div>
-                <div>
-                  <label htmlFor="sold-out">Sold out</label>
-                  <input
-                    type="radio"
-                    id="sold-out"
-                    name="state"
-                    value="sold-out"
-                  />
+                <div className="flex gap-5">
+                  <div>
+                    <label htmlFor="fresh">Fresh</label>
+                    <input
+                      type="radio"
+                      id="fresh"
+                      name="state"
+                      value="fresh"
+                      defaultChecked
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="sold-out">Sold out</label>
+                    <input
+                      type="radio"
+                      id="sold-out"
+                      name="state"
+                      value="sold-out"
+                    />
+                  </div>
                 </div>
               </div>
 
               <div className="flex flex-col">
                 <div className="flex flex-col gap-1">
                   <label htmlFor="description">Description</label>
-                  <textarea id="description" name="description" />
+                  <textarea id="description" name="description" required />
                 </div>
 
                 <div className="flex flex-col gap-1">

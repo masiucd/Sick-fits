@@ -7,6 +7,7 @@ export const FishSchema = z.object({
   species: z.string(),
   description: z.string(),
   image: z.string(),
+  state: z.string(), // fresh or soldOut
 });
 
 export type Fish = z.infer<typeof FishSchema>;
@@ -18,10 +19,5 @@ export const fishes = sqliteTable("fishes", {
   species: text("species"),
   description: text("description"),
   image: text("image"),
-  // textModifiers: text("text_modifiers")
-  //   .notNull()
-  //   .default(sql`CURRENT_TIMESTAMP`),
-  // intModifiers: integer("int_modifiers", {mode: "boolean"})
-  //   .notNull()
-  //   .default(false),
+  state: text("state"),
 });
