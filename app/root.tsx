@@ -21,7 +21,9 @@ export default function App() {
         <Links />
       </head>
       <body className="bg-gray-50 font-sans text-gray-900">
-        <Outlet />
+        <main className="flex min-h-dvh flex-col border border-red-500">
+          <Outlet />
+        </main>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
