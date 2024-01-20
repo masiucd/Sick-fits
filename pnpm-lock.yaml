@@ -23,6 +23,9 @@ dependencies:
   clsx:
     specifier: ^2.1.0
     version: 2.1.0
+  date-fns:
+    specifier: ^3.3.0
+    version: 3.3.0
   drizzle-orm:
     specifier: ^0.29.3
     version: 0.29.3(@types/better-sqlite3@7.6.8)(@types/react@18.2.47)(better-sqlite3@9.2.2)(react@18.2.0)
@@ -2406,6 +2409,10 @@ packages:
   /data-uri-to-buffer@3.0.1:
     resolution: {integrity: sha512-WboRycPNsVw3B3TL559F7kuBUM4d8CgMEvk6xEJlOp7OBPjt6G7z8WMWlD2rOFZLk6OYfFIUGsCOWzcQH9K2og==}
     engines: {node: '>= 6'}
+
+  /date-fns@3.3.0:
+    resolution: {integrity: sha512-xuouT0GuI2W8yXhCMn/AXbSl1Av3wu2hJXxMnnILTY3bYY0UgNK0qOwVXqdFBrobW5qbX1TuOTgMw7c2H2OuhA==}
+    dev: false
 
   /debug@2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
