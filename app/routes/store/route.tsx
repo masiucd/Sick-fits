@@ -3,7 +3,7 @@ import {
   type ActionFunctionArgs,
   type MetaFunction,
 } from "@remix-run/node";
-import {useLoaderData} from "@remix-run/react";
+import {Outlet, useLoaderData} from "@remix-run/react";
 import {db} from "~/db/db";
 import {desc, eq} from "drizzle-orm";
 import Orders from "./orders";
@@ -119,13 +119,16 @@ export async function loader() {
   };
 }
 
-export default function Index() {
+export default function Stores() {
   const {SeaCatches, SeaCatchImages} = useLoaderData<typeof loader>();
+
   return (
     <section className="my-10 flex flex-1 flex-col ">
       <div className="grid  flex-1  grid-cols-1 md:grid-cols-12">
         <SeaCatchesSection SeaCatches={SeaCatches} />
-        <Orders />
+        <Orders>
+          <Outlet />
+        </Orders>
         <Inventory SeaCatchImages={SeaCatchImages} />
       </div>
     </section>
