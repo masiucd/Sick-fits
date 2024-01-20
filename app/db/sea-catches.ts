@@ -1,7 +1,7 @@
 import {text, integer, sqliteTable} from "drizzle-orm/sqlite-core";
 import {z} from "zod";
 
-export const FishSchema = z.object({
+export const SeaCatchSchema = z.object({
   id: z.number(),
   name: z.string(),
   species: z.string(),
@@ -12,10 +12,10 @@ export const FishSchema = z.object({
   image: z.string(),
 });
 
-export type Fish = z.infer<typeof FishSchema>;
-export const FishesSchema = z.array(FishSchema);
+export type SeaCatch = z.infer<typeof SeaCatchSchema>;
+export const SeaCatchesSchema = z.array(SeaCatchSchema);
 
-export const fishes = sqliteTable("fishes", {
+export const SeaCatches = sqliteTable("sea_catches", {
   id: integer("id"),
   name: text("name"),
   species: text("species"),
@@ -25,17 +25,23 @@ export const fishes = sqliteTable("fishes", {
   created_at: text("created_at"),
 });
 
-export const FishImageSchema = z.object({
+export const SeaCatchImageSchema = z.object({
   id: z.number(),
   image: z.string(),
 });
 
-export type FishImage = z.infer<typeof FishImageSchema>;
+export type SeaCatchImage = z.infer<typeof SeaCatchImageSchema>;
 
-export const FishImagesSchema = z.array(FishImageSchema);
+export const SeaCatchImagesSchema = z.array(SeaCatchImageSchema);
 
-export const fishImages = sqliteTable("fish_images", {
+export const SeaCatchImages = sqliteTable("sea_catch_images", {
   id: integer("id"),
   fish_id: integer("fish_id"),
   image: text("image"),
+});
+
+export const orders = sqliteTable("orders", {
+  id: integer("id"),
+  catch_id: integer("catch_id"),
+  created_at: text("created_at"),
 });
