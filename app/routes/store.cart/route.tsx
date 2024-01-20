@@ -1,6 +1,7 @@
+import {useLoaderData} from "@remix-run/react";
 import {desc, eq} from "drizzle-orm";
 import {db} from "~/db/db";
-import {SeaCatches, orders} from "~/db/sea-catches";
+import {OrdersSchema, SeaCatches, orders} from "~/db/sea-catches";
 
 export async function loader() {
   // select o.id, o.catch_id, sc.name, sc.price, sc.species, sc.description
@@ -18,11 +19,27 @@ export async function loader() {
     .from(orders)
     .innerJoin(SeaCatches, eq(orders.catch_id, SeaCatches.id))
     .orderBy(desc(SeaCatches.created_at));
+  const ordersList = OrdersSchema.parse(orderItems);
 
-  console.log("orderItems", orderItems);
-  return [];
+  return ordersList;
 }
 
 export default function Cart() {
-  return <div>Cart</div>;
+  const orders = useLoaderData<typeof loader>();
+  return (
+    <div>
+      <ul>
+        {orders.map((order) => {
+          return (
+            <li key={order.id}>
+              <h3>{order.name}</h3>
+              <p>{order.species}</p>
+              <p>{order.description}</p>
+              <p>{order.price}</p>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
 }
