@@ -1,11 +1,11 @@
 import {
   redirect,
+  defer,
   type ActionFunctionArgs,
   type MetaFunction,
 } from "@remix-run/node";
-import {Outlet, useLoaderData} from "@remix-run/react";
+import {Await, Outlet, useLoaderData} from "@remix-run/react";
 import {db} from "~/db/db";
-import {desc, eq} from "drizzle-orm";
 import Orders from "./orders";
 import {
   SeaCatchImages,
@@ -14,6 +14,8 @@ import {
   SeaCatchesSchema,
   orders,
 } from "~/db/sea-catches";
+import {Suspense} from "react";
+import {getImages, getSeaCatches} from "./db.server";
 import {SeaCatchesSection} from "./catches";
 import {Inventory} from "./inventory";
 
@@ -38,7 +40,10 @@ export async function action({request}: ActionFunctionArgs) {
       catch_id: parseInt(seaCathId, 10),
       created_at: new Date().toISOString(),
     });
-    return redirect("/", {
+    const x = request.url.split("/").at(-1);
+    console.log('request.url.split("/")', request.url.split("/"));
+    console.log("🚀 ~ action ~ x:", x);
+    return redirect("/store", {
       headers: {
         "Cache-Control": "no-cache",
       },
@@ -78,54 +83,39 @@ export async function action({request}: ActionFunctionArgs) {
       await db.insert(SeaCatchImages).values({image, fish_id: id});
     }
 
-    return redirect("/", {
+    return redirect("/store", {
       headers: {
-        // "Set-Cookie": `fishId=${name}; Max-Age=60; HttpOnly; Path=/`,
         "Cache-Control": "no-cache",
       },
     });
   }
 }
 
+async function sleep(ms = 2000) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export async function loader() {
-  const fishItems = await db
-    .select({
-      id: SeaCatches.id,
-      name: SeaCatches.name,
-      species: SeaCatches.species,
-      description: SeaCatches.description,
-      price: SeaCatches.price,
-      state: SeaCatches.state,
-      created_at: SeaCatches.created_at,
-      image: SeaCatchImages.image,
-    })
-    .from(SeaCatches)
-    .innerJoin(SeaCatchImages, eq(SeaCatches.id, SeaCatchImages.fish_id))
-    .orderBy(desc(SeaCatches.created_at));
-
-  const images = await db
-    .select({
-      id: SeaCatchImages.id,
-      image: SeaCatchImages.image,
-    })
-    .from(SeaCatchImages);
-
-  const fishesItemsList = SeaCatchesSchema.parse(fishItems);
-  const SeaCatchImagesList = SeaCatchImagesSchema.parse(images);
-
-  return {
-    SeaCatches: fishesItemsList,
-    SeaCatchImages: SeaCatchImagesList,
-  };
+  const catches = getSeaCatches(); // streaming data
+  await sleep();
+  return defer({
+    SeaCatches: catches,
+    SeaCatchImages: SeaCatchImagesSchema.parse(await getImages()),
+  });
 }
 
 export default function Stores() {
   const {SeaCatches, SeaCatchImages} = useLoaderData<typeof loader>();
-
   return (
     <section className="my-10 flex flex-1 flex-col ">
       <div className="grid  flex-1  grid-cols-1 md:grid-cols-12">
-        <SeaCatchesSection SeaCatches={SeaCatches} />
+        <Suspense fallback={<div>Loading...</div>}>
+          <Await resolve={SeaCatches}>
+            {(s) => (
+              <SeaCatchesSection SeaCatches={SeaCatchesSchema.parse(s)} />
+            )}
+          </Await>
+        </Suspense>
         <Orders>
           <Outlet />
         </Orders>

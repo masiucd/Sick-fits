@@ -1,45 +1,71 @@
 import {useLoaderData} from "@remix-run/react";
-import {desc, eq} from "drizzle-orm";
-import {db} from "~/db/db";
-import {OrdersSchema, SeaCatches, orders} from "~/db/sea-catches";
+import {type OrderItem, OrdersSchema} from "~/db/sea-catches";
+import {getOrderItems} from "./db.server";
 
 export async function loader() {
-  // select o.id, o.catch_id, sc.name, sc.price, sc.species, sc.description
-  // from orders o
-  //          inner join sea_catches sc on o.catch_id = sc.id;
-  const orderItems = await db
-    .select({
-      id: orders.id,
-      catch_id: orders.catch_id,
-      name: SeaCatches.name,
-      price: SeaCatches.price,
-      species: SeaCatches.species,
-      description: SeaCatches.description,
-    })
-    .from(orders)
-    .innerJoin(SeaCatches, eq(orders.catch_id, SeaCatches.id))
-    .orderBy(desc(SeaCatches.created_at));
-  const ordersList = OrdersSchema.parse(orderItems);
-
-  return ordersList;
+  const ordersList = OrdersSchema.parse(await getOrderItems());
+  const groupedOrders = groupOrderItems(ordersList);
+  const total = ordersList.reduce((total, order) => {
+    return total + order.price;
+  }, 0);
+  return {
+    orders: groupedOrders,
+    total,
+  };
 }
 
 export default function Cart() {
-  const orders = useLoaderData<typeof loader>();
+  const {orders, total} = useLoaderData<typeof loader>();
   return (
     <div>
       <ul>
-        {orders.map((order) => {
+        {Object.keys(orders).map((key) => {
+          const {item, qty} = orders[key];
           return (
-            <li key={order.id}>
-              <h3>{order.name}</h3>
-              <p>{order.species}</p>
-              <p>{order.description}</p>
-              <p>{order.price}</p>
+            <li key={item.id}>
+              <h3>{item.name}</h3>
+              <p>{item.species}</p>
+              <p>{item.description}</p>
+              <p>{item.price}</p>
+              <p>{qty}</p>
             </li>
           );
         })}
       </ul>
+      <div
+        className="relative flex  justify-between px-2
+                py-3 before:absolute before:inset-0 before:z-[-1]  before:border-t-2 before:border-gray-900 before:content-['']
+                after:absolute after:inset-0 after:bottom-[0] after:z-[-1]  after:w-full  after:border-b-2 after:border-gray-900 after:content-['']"
+      >
+        <span className="font-bold">Total:</span>{" "}
+        <span>
+          {total.toLocaleString("en-US", {
+            style: "currency",
+            currency: "USD",
+          })}
+        </span>
+      </div>
     </div>
   );
+}
+
+function groupOrderItems(orderItems: OrderItem[]) {
+  const groupedOrders = orderItems.reduce(
+    (
+      obj: {
+        [key: string]: {qty: number; item: OrderItem};
+      },
+      item: OrderItem,
+    ) => {
+      if (obj[item.name]) {
+        obj[item.name].qty += 1;
+      } else {
+        obj[item.name] = {qty: 1, item};
+      }
+      return obj;
+    },
+    {},
+  );
+
+  return groupedOrders;
 }
