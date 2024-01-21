@@ -40,9 +40,11 @@ export async function addCatch({
     await db.insert(SeaCatchImages).values({image, catch_id: id});
   }
 
-  return redirect("/store", {
-    headers: {
-      "Cache-Control": "no-cache",
-    },
-  });
+  // return redirect("/store", {
+  //   headers: {
+  //     "Cache-Control": "no-cache",
+  //   },
+
+  // });
+  return id;
 }

@@ -14,6 +14,7 @@ module.exports = {
       jsx: true,
     },
   },
+
   env: {
     browser: true,
     commonjs: true,
@@ -86,6 +87,6 @@ module.exports = {
   ],
   rules: {
     "no-console": "warn",
-    "prefer-const": 0,
+    "prefer-const": "off",
   },
 };

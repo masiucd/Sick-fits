@@ -1,4 +1,5 @@
 import {useFetcher} from "@remix-run/react";
+import {useEffect, useRef} from "react";
 import {type SeaCatchImage} from "~/db/sea-catches";
 
 export function Inventory({SeaCatchImages}: {SeaCatchImages: SeaCatchImage[]}) {
@@ -11,9 +12,17 @@ export function Inventory({SeaCatchImages}: {SeaCatchImages: SeaCatchImage[]}) {
 }
 
 function InventoryForm({SeaCatchImages}: {SeaCatchImages: SeaCatchImage[]}) {
-  const fetcher = useFetcher();
+  const fetcher = useFetcher({key: "inventory"});
+  const ref = useRef<HTMLFormElement | null>(null);
+
+  useEffect(() => {
+    if (ref.current && fetcher.data && fetcher.state === "idle") {
+      ref.current.reset();
+      (ref.current.elements.namedItem("name") as HTMLElement)?.focus();
+    }
+  }, [fetcher.data, fetcher.state]);
   return (
-    <fetcher.Form method="post">
+    <fetcher.Form method="post" ref={ref}>
       <fieldset className="flex flex-col gap-2">
         <div className="flex flex-col border-2 md:flex-row">
           <div className="flex flex-1 flex-col">
