@@ -1,6 +1,6 @@
 import {db} from "~/db/db";
 import {desc, eq} from "drizzle-orm";
-import {SeaCatchImages, SeaCatches} from "~/db/sea-catches";
+import {SeaCatchImages, SeaCatches, orders} from "~/db/sea-catches";
 
 export function getSeaCatches() {
   const catches = db
@@ -15,7 +15,7 @@ export function getSeaCatches() {
       image: SeaCatchImages.image,
     })
     .from(SeaCatches)
-    .innerJoin(SeaCatchImages, eq(SeaCatches.id, SeaCatchImages.fish_id))
+    .innerJoin(SeaCatchImages, eq(SeaCatches.id, SeaCatchImages.catch_id))
     .orderBy(desc(SeaCatches.created_at))
     .execute();
   return catches;
@@ -28,4 +28,38 @@ export async function getImages() {
       image: SeaCatchImages.image,
     })
     .from(SeaCatchImages);
+}
+
+export async function insertCatch({
+  name,
+  species,
+  description,
+  state,
+  price,
+}: {
+  name: string;
+  species: string;
+  description: string;
+  state: string;
+  price: string;
+}) {
+  const [{id}] = await db
+    .insert(SeaCatches)
+    .values({
+      name,
+      species,
+      description,
+      state,
+      price: parseFloat(price),
+      created_at: new Date().toISOString(),
+    })
+    .returning({id: SeaCatches.id});
+  return id;
+}
+
+export async function insertIntoOrder(seaCathId: string) {
+  await db.insert(orders).values({
+    catch_id: parseInt(seaCathId, 10),
+    created_at: new Date().toISOString(),
+  });
 }

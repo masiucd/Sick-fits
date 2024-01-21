@@ -1,4 +1,4 @@
-import {useFetcher} from "@remix-run/react";
+import {useFetcher, useLocation} from "@remix-run/react";
 import {format, parseISO} from "date-fns";
 import {type SeaCatch} from "~/db/sea-catches";
 
@@ -17,6 +17,8 @@ export function SeaCatchesSection({SeaCatches}: {SeaCatches: SeaCatch[]}) {
 
 function FishCard({seaCatch}: {seaCatch: SeaCatch}) {
   const fetcher = useFetcher();
+  const location = useLocation();
+
   return (
     <li>
       <h2>{seaCatch.name}</h2>
@@ -35,6 +37,7 @@ function FishCard({seaCatch}: {seaCatch: SeaCatch}) {
       />
       <fetcher.Form method="post">
         <input type="hidden" name="sea-catch-id" value={seaCatch.id} />
+        <input type="hidden" name="pathname" value={location.pathname} />
         <button
           type="submit"
           className="rounded bg-primary-500 px-4 py-2 font-bold text-white hover:bg-primary-700"

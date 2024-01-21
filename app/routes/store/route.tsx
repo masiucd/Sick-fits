@@ -1,23 +1,16 @@
 import {
-  redirect,
   defer,
   type ActionFunctionArgs,
   type MetaFunction,
 } from "@remix-run/node";
 import {Await, Outlet, useLoaderData} from "@remix-run/react";
-import {db} from "~/db/db";
 import Orders from "./orders";
-import {
-  SeaCatchImages,
-  SeaCatchImagesSchema,
-  SeaCatches,
-  SeaCatchesSchema,
-  orders,
-} from "~/db/sea-catches";
+import {SeaCatchImagesSchema, SeaCatchesSchema} from "~/db/sea-catches";
 import {Suspense} from "react";
 import {getImages, getSeaCatches} from "./db.server";
 import {SeaCatchesSection} from "./catches";
 import {Inventory} from "./inventory";
+import {addCatch, addToCart} from "./handlers.server";
 
 export const meta: MetaFunction = () => {
   return [
@@ -32,22 +25,12 @@ export async function action({request}: ActionFunctionArgs) {
 
   if (action === "add-to-cart") {
     const seaCathId = formData.get("sea-catch-id");
-    if (typeof seaCathId !== "string") {
+    const pathname = formData.get("pathname");
+    if (typeof seaCathId !== "string" || typeof pathname !== "string") {
       return new Response("Invalid form data", {status: 400});
     }
-
-    await db.insert(orders).values({
-      catch_id: parseInt(seaCathId, 10),
-      created_at: new Date().toISOString(),
-    });
-    const x = request.url.split("/").at(-1);
-    console.log('request.url.split("/")', request.url.split("/"));
-    console.log("🚀 ~ action ~ x:", x);
-    return redirect("/store", {
-      headers: {
-        "Cache-Control": "no-cache",
-      },
-    });
+    return await addToCart(seaCathId, pathname);
+    // // In a real app, REDIS would be a better choice for this kind of thing
   } else {
     const name = formData.get("name");
     const species = formData.get("species");
@@ -65,28 +48,13 @@ export async function action({request}: ActionFunctionArgs) {
     ) {
       return new Response("Invalid form data", {status: 400});
     }
-
-    const newFish = {
+    return await addCatch({
       name,
       species,
       description,
+      image,
       state,
-      price: parseFloat(price),
-      created_at: new Date().toISOString(),
-    };
-
-    const [{id}] = await db
-      .insert(SeaCatches)
-      .values(newFish)
-      .returning({id: SeaCatches.id});
-    if (id) {
-      await db.insert(SeaCatchImages).values({image, fish_id: id});
-    }
-
-    return redirect("/store", {
-      headers: {
-        "Cache-Control": "no-cache",
-      },
+      price,
     });
   }
 }

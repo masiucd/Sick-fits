@@ -36,7 +36,7 @@ export const SeaCatchImagesSchema = z.array(SeaCatchImageSchema);
 
 export const SeaCatchImages = sqliteTable("sea_catch_images", {
   id: integer("id"),
-  fish_id: integer("fish_id"),
+  catch_id: integer("catch_id"),
   image: text("image"),
 });
 
