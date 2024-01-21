@@ -58,8 +58,11 @@ export async function insertCatch({
 }
 
 export async function insertIntoOrder(seaCathId: string) {
-  await db.insert(orders).values({
-    catch_id: parseInt(seaCathId, 10),
-    created_at: new Date().toISOString(),
-  });
+  return await db
+    .insert(orders)
+    .values({
+      catch_id: parseInt(seaCathId, 10),
+      created_at: new Date().toISOString(),
+    })
+    .returning({id: orders.id});
 }

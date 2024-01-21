@@ -25,11 +25,10 @@ export async function action({request}: ActionFunctionArgs) {
 
   if (action === "add-to-cart") {
     const seaCathId = formData.get("sea-catch-id");
-    const pathname = formData.get("pathname");
-    if (typeof seaCathId !== "string" || typeof pathname !== "string") {
+    if (typeof seaCathId !== "string") {
       return new Response("Invalid form data", {status: 400});
     }
-    return await addToCart(seaCathId, pathname);
+    return await addToCart(seaCathId);
     // // In a real app, REDIS would be a better choice for this kind of thing
   } else {
     const name = formData.get("name");

@@ -1,52 +1,58 @@
-import {useFetcher, useLocation} from "@remix-run/react";
+import {useFetcher} from "@remix-run/react";
 import {format, parseISO} from "date-fns";
 import {type SeaCatch} from "~/db/sea-catches";
 
 export function SeaCatchesSection({SeaCatches}: {SeaCatches: SeaCatch[]}) {
   return (
-    <div className="col-span-4 border-2 border-gray-900  ">
+    <div className="col-span-4 border-2 border-gray-900">
       <h1 className="mb-5">Welcome to SeaCatch of today</h1>
-      <ul className="flex max-h-[90dvh] flex-col gap-5 overflow-y-scroll">
+      <ul className="flex max-h-[90dvh] flex-col gap-5 overflow-y-scroll px-2">
         {SeaCatches.map((seaCatch) => (
-          <FishCard key={seaCatch.id} seaCatch={seaCatch} />
+          <SeaCatchCard key={seaCatch.id} seaCatch={seaCatch} />
         ))}
       </ul>
     </div>
   );
 }
 
-function FishCard({seaCatch}: {seaCatch: SeaCatch}) {
+function SeaCatchCard({seaCatch}: {seaCatch: SeaCatch}) {
   const fetcher = useFetcher();
-  const location = useLocation();
-
   return (
-    <li>
-      <h2>{seaCatch.name}</h2>
-      <h2>
-        {seaCatch.price.toLocaleString("en-US", {
-          style: "currency",
-          currency: "USD",
-        })}
-      </h2>
-      <p>{seaCatch.species}</p>
-      <p>{seaCatch.description}</p>
-      <p>{format(parseISO(seaCatch.created_at), "MMMM do, yyyy")}</p>
-      <img
-        src={`/images/${seaCatch.image || seaCatch.name}.jpg`}
-        alt={seaCatch.name}
-      />
-      <fetcher.Form method="post">
-        <input type="hidden" name="sea-catch-id" value={seaCatch.id} />
-        <input type="hidden" name="pathname" value={location.pathname} />
-        <button
-          type="submit"
-          className="rounded bg-primary-500 px-4 py-2 font-bold text-white hover:bg-primary-700"
-          name="_action"
-          value="add-to-cart"
-        >
-          Add to cart
-        </button>
-      </fetcher.Form>
+    <li className="flex gap-2 bg-gray-100 shadow-sm ">
+      <div className="flex-1 border border-red-400">
+        <img
+          src={`/images/${seaCatch.image || seaCatch.name}.jpg`}
+          alt={seaCatch.name}
+          className="aspect-auto h-full w-full object-contain"
+          // className="aspect-auto h-full w-full object-cover"
+        />
+      </div>
+      <div className="flex flex-[2] flex-col gap-1">
+        <p className="">
+          <span className="text-xl font-bold">{seaCatch.name}</span>
+        </p>
+        <p>
+          {seaCatch.price.toLocaleString("en-US", {
+            style: "currency",
+            currency: "USD",
+          })}
+        </p>
+        <p>{seaCatch.species}</p>
+        <p>{seaCatch.description}</p>
+        <p>{format(parseISO(seaCatch.created_at), "MMMM do, yyyy")}</p>
+        <fetcher.Form method="post">
+          <input type="hidden" name="sea-catch-id" value={seaCatch.id} />
+
+          <button
+            type="submit"
+            className="border border-gray-900 px-2 py-1 font-semibold transition-colors duration-200 hover:bg-gray-900 hover:text-gray-50"
+            name="_action"
+            value="add-to-cart"
+          >
+            Add to cart
+          </button>
+        </fetcher.Form>
+      </div>
     </li>
   );
 }
