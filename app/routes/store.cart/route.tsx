@@ -16,18 +16,27 @@ export async function loader() {
 
 export default function Cart() {
   const {orders, total} = useLoaderData<typeof loader>();
+
   return (
     <div>
-      <ul>
+      <ul className="flex flex-col gap-2">
         {Object.keys(orders).map((key) => {
           const {item, qty} = orders[key];
           return (
-            <li key={item.id}>
-              <h3>{item.name}</h3>
-              <p>{item.species}</p>
-              <p>{item.description}</p>
-              <p>{item.price}</p>
-              <p>{qty}</p>
+            <li key={item.id} className="flex justify-between bg-red-200 px-3">
+              <div className="flex gap-2">
+                <p>
+                  {qty}
+                  <sup>st</sup>
+                </p>
+                <p>{item.name}</p>
+              </div>
+              <p>
+                {item.price.toLocaleString("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                })}
+              </p>
             </li>
           );
         })}

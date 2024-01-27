@@ -17,6 +17,7 @@ export function SeaCatchesSection({SeaCatches}: {SeaCatches: SeaCatch[]}) {
 
 function SeaCatchCard({seaCatch}: {seaCatch: SeaCatch}) {
   const fetcher = useFetcher();
+
   return (
     <li className="flex gap-2 bg-gray-100 shadow-sm ">
       <div className="flex-1 border border-red-400">
@@ -42,10 +43,9 @@ function SeaCatchCard({seaCatch}: {seaCatch: SeaCatch}) {
         <p>{format(parseISO(seaCatch.created_at), "MMMM do, yyyy")}</p>
         <fetcher.Form method="post">
           <input type="hidden" name="sea-catch-id" value={seaCatch.id} />
-
           <button
             type="submit"
-            className="border border-gray-900 px-2 py-1 font-semibold transition-colors duration-200 hover:bg-gray-900 hover:text-gray-50"
+            className="w-full border border-gray-900 px-2 py-1 font-semibold transition-colors duration-200 hover:bg-gray-900 hover:text-gray-50"
             name="_action"
             value="add-to-cart"
           >
