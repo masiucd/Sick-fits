@@ -1,6 +1,7 @@
 import {useLoaderData} from "@remix-run/react";
 import {type OrderItem, OrdersSchema} from "~/db/sea-catches";
 import {getOrderItems} from "./db.server";
+import {motion} from "framer-motion";
 
 export async function loader() {
   const ordersList = OrdersSchema.parse(await getOrderItems());
@@ -19,25 +20,43 @@ export default function Cart() {
 
   return (
     <div>
-      <ul className="flex flex-col gap-2">
+      <ul className="mb-2 flex flex-col gap-2 px-2">
         {Object.keys(orders).map((key) => {
           const {item, qty} = orders[key];
           return (
-            <li key={item.id} className="flex justify-between bg-red-200 px-3">
+            <motion.li
+              key={item.id}
+              className="flex min-h-10 items-center justify-between  border-b border-gray-700 bg-gray-50 px-3 py-2 text-sm text-gray-600"
+              initial={{opacity: 0.3, x: -100}}
+              animate={{opacity: 1, x: 0}}
+              transition={{duration: 0.5, type: "spring"}}
+            >
               <div className="flex gap-2">
-                <p>
-                  {qty}
-                  <sup>st</sup>
+                <motion.span
+                  initial={{scale: 0}}
+                  animate={{scale: 1}}
+                  transition={{duration: 0.5}}
+                  className="flex items-center gap-1"
+                >
+                  <button>
+                    <span>&larr;</span>
+                  </button>
+                  <span>{qty}</span>
+                  <button>
+                    <span>&rarr;</span>
+                  </button>
+                </motion.span>
+                <p className="text-balance font-semibold  capitalize">
+                  {item.name}
                 </p>
-                <p>{item.name}</p>
               </div>
               <p>
-                {item.price.toLocaleString("en-US", {
+                {(item.price * qty).toLocaleString("en-US", {
                   style: "currency",
                   currency: "USD",
                 })}
               </p>
-            </li>
+            </motion.li>
           );
         })}
       </ul>

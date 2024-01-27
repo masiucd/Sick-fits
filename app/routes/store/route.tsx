@@ -64,7 +64,6 @@ async function sleep(ms = 2000) {
 
 export async function loader() {
   const catches = getSeaCatches(); // streaming data
-  await sleep();
   return defer({
     SeaCatches: catches,
     SeaCatchImages: SeaCatchImagesSchema.parse(await getImages()),
