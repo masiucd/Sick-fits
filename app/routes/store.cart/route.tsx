@@ -1,7 +1,43 @@
-import {useLoaderData} from "@remix-run/react";
-import {type OrderItem, OrdersSchema} from "~/db/sea-catches";
+import {useFetcher, useLoaderData} from "@remix-run/react";
+import {
+  type OrderItem,
+  OrdersSchema,
+  SeaCatches,
+  orders,
+} from "~/db/sea-catches";
 import {getOrderItems} from "./db.server";
 import {motion} from "framer-motion";
+import {type ActionFunctionArgs} from "@remix-run/node";
+import {db} from "~/db/db";
+import {eq} from "drizzle-orm";
+
+export async function action({request}: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const action = formData.get("_action");
+  console.log("🚀 ~ action ~ action:", action);
+  if (action === "increase-qty") {
+    //
+  }
+  if (action === "decrease-qty") {
+    const seaCatchId = formData.get("sea-catch-id");
+    const cartItemId = formData.get("cart-item-id");
+    if (cartItemId === null || seaCatchId === null) {
+      return new Response("Invalid form data", {status: 400});
+    }
+
+    // db.delete(orders).where(eq(orders.id, cartItemId))
+    const deletedId = await db
+      .delete(orders)
+      .where(eq(orders.id, Number(cartItemId)))
+      .returning({deletedId: orders.id});
+    console.log("🚀 ~ action ~ seaCatchId:", seaCatchId);
+    console.log("🚀 ~ action ~ cartItemId:", cartItemId);
+    return new Response("OK", {status: 200});
+    //
+  }
+
+  return null;
+}
 
 export async function loader() {
   const ordersList = OrdersSchema.parse(await getOrderItems());
@@ -17,6 +53,7 @@ export async function loader() {
 
 export default function Cart() {
   const {orders, total} = useLoaderData<typeof loader>();
+  const fetcher = useFetcher();
 
   return (
     <div>
@@ -24,39 +61,43 @@ export default function Cart() {
         {Object.keys(orders).map((key) => {
           const {item, qty} = orders[key];
           return (
-            <motion.li
+            <li
               key={item.id}
               className="flex min-h-10 items-center justify-between  border-b border-gray-700 bg-gray-50 px-3 py-2 text-sm text-gray-600"
-              initial={{opacity: 0.3, x: -100}}
-              animate={{opacity: 1, x: 0}}
-              transition={{duration: 0.5, type: "spring"}}
             >
-              <div className="flex gap-2">
-                <motion.span
-                  initial={{scale: 0}}
-                  animate={{scale: 1}}
-                  transition={{duration: 0.5}}
-                  className="flex items-center gap-1"
-                >
-                  <button>
+              <fetcher.Form className="flex gap-2" method="post">
+                <input
+                  type="hidden"
+                  name="sea-catch-id"
+                  value={item.catch_id}
+                />
+                <input type="hidden" name="cart-item-id" value={item.id} />
+                <span className="flex items-center gap-1">
+                  <button type="submit" name="_action" value="decrease-qty">
                     <span>&larr;</span>
                   </button>
-                  <span>{qty}</span>
-                  <button>
+                  <motion.span
+                    initial={{scale: 0}}
+                    animate={{scale: 1}}
+                    transition={{duration: 0.5}}
+                  >
+                    {qty}
+                  </motion.span>
+                  <button type="submit" name="_action" value="increase-qty">
                     <span>&rarr;</span>
                   </button>
-                </motion.span>
+                </span>
                 <p className="text-balance font-semibold  capitalize">
                   {item.name}
                 </p>
-              </div>
+              </fetcher.Form>
               <p>
                 {(item.price * qty).toLocaleString("en-US", {
                   style: "currency",
                   currency: "USD",
                 })}
               </p>
-            </motion.li>
+            </li>
           );
         })}
       </ul>

@@ -58,10 +58,6 @@ export async function action({request}: ActionFunctionArgs) {
   }
 }
 
-async function sleep(ms = 2000) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 export async function loader() {
   const catches = getSeaCatches(); // streaming data
   return defer({
