@@ -1,17 +1,17 @@
 import {useFetcher} from "@remix-run/react";
 import {useEffect, useRef} from "react";
-import {type SeaCatchImage} from "~/db/sea-catches";
+import {type SeaCatchImage} from "~/db/records/sea-catches.server";
 
-export function Inventory({SeaCatchImages}: {SeaCatchImages: SeaCatchImage[]}) {
+export function Inventory({seaCatchImages}: {seaCatchImages: SeaCatchImage[]}) {
   return (
     <div className="col-span-5 border-2 border-gray-900">
       <h3>Inventory</h3>
-      <InventoryForm SeaCatchImages={SeaCatchImages} />
+      <InventoryForm seaCatchImages={seaCatchImages} />
     </div>
   );
 }
 
-function InventoryForm({SeaCatchImages}: {SeaCatchImages: SeaCatchImage[]}) {
+function InventoryForm({seaCatchImages}: {seaCatchImages: SeaCatchImage[]}) {
   const fetcher = useFetcher({key: "inventory"});
   const ref = useRef<HTMLFormElement | null>(null);
 
@@ -78,7 +78,7 @@ function InventoryForm({SeaCatchImages}: {SeaCatchImages: SeaCatchImage[]}) {
             <label htmlFor="image">Image</label>
 
             <select name="image" id="image">
-              {SeaCatchImages.map((img) => (
+              {seaCatchImages.map((img) => (
                 <option key={img.id} value={img.image}>
                   {img.image}
                 </option>

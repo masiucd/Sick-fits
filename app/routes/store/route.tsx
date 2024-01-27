@@ -1,16 +1,18 @@
-import {
-  defer,
-  type ActionFunctionArgs,
-  type MetaFunction,
-} from "@remix-run/node";
-import {Await, Outlet, useLoaderData} from "@remix-run/react";
+import {type ActionFunctionArgs, type MetaFunction} from "@remix-run/node";
+import {Outlet, useLoaderData} from "@remix-run/react";
 import Orders from "./orders";
-import {SeaCatchImagesSchema, SeaCatchesSchema} from "~/db/sea-catches";
-import {Suspense} from "react";
-import {getImages, getSeaCatches} from "./db.server";
+import {
+  SeaCatchImageSchema,
+  SeaCatchSchema,
+} from "~/db/records/sea-catches.server";
 import {SeaCatchesSection} from "./catches";
 import {Inventory} from "./inventory";
-import {addCatch, addToCart} from "./handlers.server";
+import {
+  addCatch,
+  addToCart,
+  getImages,
+  getSeaCatches,
+} from "~/biz/sea-catches/impl.server";
 
 export const meta: MetaFunction = () => {
   return [
@@ -59,29 +61,22 @@ export async function action({request}: ActionFunctionArgs) {
 }
 
 export async function loader() {
-  const catches = getSeaCatches(); // streaming data
-  return defer({
-    SeaCatches: catches,
-    SeaCatchImages: SeaCatchImagesSchema.parse(await getImages()),
-  });
+  return {
+    seaCatchImages: SeaCatchImageSchema.array().parse(await getImages()),
+    seaCatches: SeaCatchSchema.array().parse(await getSeaCatches()),
+  };
 }
 
 export default function Stores() {
-  const {SeaCatches, SeaCatchImages} = useLoaderData<typeof loader>();
+  const {seaCatches, seaCatchImages} = useLoaderData<typeof loader>();
   return (
     <section className="my-10 flex flex-1 flex-col ">
       <div className="grid  flex-1  grid-cols-1 md:grid-cols-12">
-        <Suspense fallback={<div>Loading...</div>}>
-          <Await resolve={SeaCatches}>
-            {(s) => (
-              <SeaCatchesSection SeaCatches={SeaCatchesSchema.parse(s)} />
-            )}
-          </Await>
-        </Suspense>
+        <SeaCatchesSection seaCatches={seaCatches} />
         <Orders>
           <Outlet />
         </Orders>
-        <Inventory SeaCatchImages={SeaCatchImages} />
+        <Inventory seaCatchImages={seaCatchImages} />
       </div>
     </section>
   );

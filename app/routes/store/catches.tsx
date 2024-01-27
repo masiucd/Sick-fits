@@ -1,13 +1,13 @@
 import {useFetcher} from "@remix-run/react";
 import {format, parseISO} from "date-fns";
-import {type SeaCatch} from "~/db/sea-catches";
+import {type SeaCatch} from "~/db/records/sea-catches.server";
 
-export function SeaCatchesSection({SeaCatches}: {SeaCatches: SeaCatch[]}) {
+export function SeaCatchesSection({seaCatches}: {seaCatches: SeaCatch[]}) {
   return (
     <div className="col-span-4 border-2 border-gray-900">
       <h1 className="mb-5">Welcome to SeaCatch of today</h1>
       <ul className="flex max-h-[90dvh] flex-col gap-5 overflow-y-scroll px-2">
-        {SeaCatches.map((seaCatch) => (
+        {seaCatches.map((seaCatch) => (
           <SeaCatchCard key={seaCatch.id} seaCatch={seaCatch} />
         ))}
       </ul>

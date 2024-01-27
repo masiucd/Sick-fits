@@ -1,6 +1,6 @@
-import {db} from "~/db/db";
 import {desc, eq} from "drizzle-orm";
-import {SeaCatchImages, SeaCatches, orders} from "~/db/sea-catches";
+import {db} from "../db.server";
+import {SeaCatchImages, SeaCatches} from "../records/sea-catches.server";
 
 export function getSeaCatches() {
   const catches = db
@@ -30,7 +30,7 @@ export async function getImages() {
     .from(SeaCatchImages);
 }
 
-export async function insertCatch({
+export async function insertSeaCatch({
   name,
   species,
   description,
@@ -57,12 +57,6 @@ export async function insertCatch({
   return id;
 }
 
-export async function insertIntoOrder(seaCathId: string) {
-  return await db
-    .insert(orders)
-    .values({
-      catch_id: parseInt(seaCathId, 10),
-      created_at: new Date().toISOString(),
-    })
-    .returning({id: orders.id});
+export async function insertImage(id: number, image: string) {
+  await db.insert(SeaCatchImages).values({image, catch_id: id});
 }

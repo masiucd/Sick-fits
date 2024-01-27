@@ -39,20 +39,3 @@ export const SeaCatchImages = sqliteTable("sea_catch_images", {
   catch_id: integer("catch_id"),
   image: text("image"),
 });
-
-const OrderItemSchema = z.object({
-  id: z.number(),
-  catch_id: z.number(),
-  name: z.string(),
-  price: z.number(),
-  species: z.string(),
-  description: z.string(),
-});
-export const OrdersSchema = z.array(OrderItemSchema);
-export type OrderItem = z.infer<typeof OrderItemSchema>;
-
-export const orders = sqliteTable("orders", {
-  id: integer("id"),
-  catch_id: integer("catch_id"),
-  created_at: text("created_at"),
-});

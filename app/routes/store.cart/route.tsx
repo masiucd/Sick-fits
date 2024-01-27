@@ -1,41 +1,28 @@
 import {useFetcher, useLoaderData} from "@remix-run/react";
-import {
-  type OrderItem,
-  OrdersSchema,
-  SeaCatches,
-  orders,
-} from "~/db/sea-catches";
-import {getOrderItems} from "./db.server";
 import {motion} from "framer-motion";
 import {type ActionFunctionArgs} from "@remix-run/node";
-import {db} from "~/db/db";
-import {eq} from "drizzle-orm";
+
+import {deleteOrder, getOrderItems} from "~/biz/orders/impl.server";
+import {OrderItem, OrdersSchema} from "~/db/records/orders.server";
 
 export async function action({request}: ActionFunctionArgs) {
   const formData = await request.formData();
   const action = formData.get("_action");
-  console.log("🚀 ~ action ~ action:", action);
-  if (action === "increase-qty") {
-    //
-  }
   if (action === "decrease-qty") {
+    const cartItemId = formData.get("cart-item-id");
+    if (cartItemId === null) {
+      return new Response("Invalid form data", {status: 400});
+    }
+    await deleteOrder(Number(cartItemId));
+    return new Response("OK", {status: 200});
+  }
+  if (action === "increase-qty") {
     const seaCatchId = formData.get("sea-catch-id");
     const cartItemId = formData.get("cart-item-id");
     if (cartItemId === null || seaCatchId === null) {
       return new Response("Invalid form data", {status: 400});
     }
-
-    // db.delete(orders).where(eq(orders.id, cartItemId))
-    const deletedId = await db
-      .delete(orders)
-      .where(eq(orders.id, Number(cartItemId)))
-      .returning({deletedId: orders.id});
-    console.log("🚀 ~ action ~ seaCatchId:", seaCatchId);
-    console.log("🚀 ~ action ~ cartItemId:", cartItemId);
-    return new Response("OK", {status: 200});
-    //
   }
-
   return null;
 }
 
@@ -118,23 +105,17 @@ export default function Cart() {
   );
 }
 
-function groupOrderItems(orderItems: OrderItem[]) {
-  const groupedOrders = orderItems.reduce(
-    (
-      obj: {
-        [key: string]: {qty: number; item: OrderItem};
-      },
-      item: OrderItem,
-    ) => {
-      if (obj[item.name]) {
-        obj[item.name].qty += 1;
-      } else {
-        obj[item.name] = {qty: 1, item};
-      }
-      return obj;
+function groupOrderItems(
+  orderItems: OrderItem[],
+): Record<string, {qty: number; item: OrderItem}> {
+  return orderItems.reduce(
+    (acc, item) => {
+      acc[item.name] = {
+        qty: (acc[item.name]?.qty || 0) + 1,
+        item,
+      };
+      return acc;
     },
-    {},
+    {} as Record<string, {qty: number; item: OrderItem}>,
   );
-
-  return groupedOrders;
 }
