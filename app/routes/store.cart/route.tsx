@@ -1,9 +1,10 @@
-import {useFetcher, useLoaderData} from "@remix-run/react";
+import {Link, useFetcher, useLoaderData} from "@remix-run/react";
 import {motion} from "framer-motion";
 import {type ActionFunctionArgs} from "@remix-run/node";
 
 import {deleteOrder, getOrderItems} from "~/biz/orders/impl.server";
 import {OrderItem, OrdersSchema} from "~/db/records/orders.server";
+import {addToCart} from "~/biz/sea-catches/impl.server";
 
 export async function action({request}: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -17,11 +18,13 @@ export async function action({request}: ActionFunctionArgs) {
     return new Response("OK", {status: 200});
   }
   if (action === "increase-qty") {
-    const seaCatchId = formData.get("sea-catch-id");
+    const seaCathId = formData.get("sea-catch-id");
     const cartItemId = formData.get("cart-item-id");
-    if (cartItemId === null || seaCatchId === null) {
+    if (cartItemId === null || seaCathId === null) {
       return new Response("Invalid form data", {status: 400});
     }
+    // to we want to add a new order item or update an existing one?
+    return await addToCart(Number(seaCathId));
   }
   return null;
 }
@@ -43,8 +46,8 @@ export default function Cart() {
   const fetcher = useFetcher();
 
   return (
-    <div>
-      <ul className="mb-2 flex flex-col gap-2 px-2">
+    <div className="px-2">
+      <ul className="mb-2 flex flex-col gap-2 ">
         {Object.keys(orders).map((key) => {
           const {item, qty} = orders[key];
           return (
@@ -88,18 +91,31 @@ export default function Cart() {
           );
         })}
       </ul>
+      <div className="my-2 flex justify-end">
+        <Link
+          className="border-2 border-gray-600 bg-gray-700 px-2 py-1 text-gray-100"
+          to="/store/checkout"
+        >
+          Checkout
+        </Link>
+      </div>
+
       <div
         className="relative flex  justify-between px-2
                 py-3 before:absolute before:inset-0 before:z-[-1]  before:border-t-2 before:border-gray-900 before:content-['']
                 after:absolute after:inset-0 after:bottom-[0] after:z-[-1]  after:w-full  after:border-b-2 after:border-gray-900 after:content-['']"
       >
         <span className="font-bold">Total:</span>{" "}
-        <span>
+        <motion.span
+          initial={{scale: 0}}
+          animate={{scale: 1}}
+          transition={{duration: 0.5, type: "spring"}}
+        >
           {total.toLocaleString("en-US", {
             style: "currency",
             currency: "USD",
           })}
-        </span>
+        </motion.span>
       </div>
     </div>
   );

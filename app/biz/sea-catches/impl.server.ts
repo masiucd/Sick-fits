@@ -6,7 +6,7 @@ import {
   insertSeaCatch,
 } from "~/db/sea-catches/dao.server";
 
-export async function addToCart(seaCathId: string) {
+export async function addToCart(seaCathId: number) {
   // In a real app, REDIS would be a better choice for this kind of thing
   return await insertIntoOrder(seaCathId);
 }
