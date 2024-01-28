@@ -7,7 +7,10 @@ export default {
     extend: {
       colors: {
         gray: colors.slate,
-        primary: colors.sky,
+        primary: colors.yellow,
+      },
+      backgroundImage: {
+        anchor: "url('/images/anchor.svg')",
       },
     },
   },

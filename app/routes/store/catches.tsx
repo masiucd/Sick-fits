@@ -4,9 +4,25 @@ import {type SeaCatch} from "~/db/records/sea-catches.server";
 
 export function SeaCatchesSection({seaCatches}: {seaCatches: SeaCatch[]}) {
   return (
-    <div className="col-span-4 border-2 border-gray-900">
-      <h1 className="mb-5">Welcome to SeaCatch of today</h1>
-      <ul className="flex max-h-[90dvh] flex-col gap-5 overflow-y-scroll px-2">
+    <div className="col-span-4 max-h-[95dvh] overflow-y-scroll border-2 border-gray-900">
+      <div className="my-10 text-center">
+        <h1 className="mb-5 text-pretty text-6xl font-semibold capitalize leading-[2cm] tracking-tighter">
+          Catch
+          <span className="relative mx-2  bg-anchor bg-cover bg-center bg-no-repeat px-10 py-5">
+            <span className="absolute left-[-25%] top-[35%] h-full w-full bg-cover bg-center text-xl tracking-normal text-primary-500">
+              of
+            </span>
+            <span className="absolute right-[-30%] top-[35%] h-full w-full bg-cover bg-center text-xl tracking-normal text-primary-500">
+              the
+            </span>
+          </span>
+          day
+        </h1>
+        <p className="relative text-center text-base font-semibold uppercase tracking-tighter text-primary-500 before:absolute before:left-[4%] before:top-1/2 before:h-[2px]   before:w-7 before:bg-gray-800 before:content-[''] after:absolute after:right-[3%] after:top-1/2 after:h-[2px]   after:w-7 after:bg-gray-800 after:content-['']">
+          We have the freshest fish in the world
+        </p>
+      </div>
+      <ul className="flex  flex-col gap-5 px-2 py-5">
         {seaCatches.map((seaCatch) => (
           <SeaCatchCard key={seaCatch.id} seaCatch={seaCatch} />
         ))}
