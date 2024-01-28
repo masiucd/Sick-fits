@@ -20,8 +20,8 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="bg-gray-50 font-sans text-gray-900">
-        <main className="flex min-h-dvh flex-col border border-red-500">
+      <body className="bg-gray-200 font-sans text-gray-900">
+        <main className="flex min-h-dvh flex-col">
           <Outlet />
         </main>
         <ScrollRestoration />

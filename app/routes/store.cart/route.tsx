@@ -42,7 +42,7 @@ export async function loader() {
 export default function Cart() {
   const {orders, total} = useLoaderData<typeof loader>();
   return (
-    <div className="px-2">
+    <div className="bg-white px-2">
       <ul className="mb-2 flex flex-col gap-2 ">
         {Object.keys(orders).map((key) => {
           const {item, qty} = orders[key];
@@ -65,7 +65,7 @@ const variants = {
 function CartItem({item, qty}: {item: OrderItem; qty: number}) {
   const fetcher = useFetcher();
   return (
-    <li className="flex min-h-10 items-center justify-between  border-b border-gray-700 bg-gray-50 px-3 py-2 text-sm text-gray-600">
+    <li className="flex min-h-10 items-center justify-between  border-b border-gray-700  px-3 py-2 text-sm text-gray-600">
       <fetcher.Form className="flex gap-2" method="post">
         <input type="hidden" name="sea-catch-id" value={item.catch_id} />
         <input type="hidden" name="cart-item-id" value={item.id} />
@@ -118,9 +118,9 @@ function Checkout() {
 function Total({total}: {total: number}) {
   return (
     <div
-      className="relative flex  justify-between px-2
-          py-3 before:absolute before:inset-0 before:z-[-1]  before:border-t-2 before:border-gray-900 before:content-['']
-          after:absolute after:inset-0 after:bottom-[0] after:z-[-1]  after:w-full  after:border-b-2 after:border-gray-900 after:content-['']"
+      className="relative flex  justify-between border-y border-gray-900 px-2
+          py-3 text-sm before:absolute before:inset-0  before:z-[-1] before:border-t-2 before:border-gray-900
+          before:content-[''] after:absolute after:inset-0 after:bottom-[0]  after:z-[-1]  after:w-full after:border-b-2 after:border-gray-900 after:content-['']"
     >
       <span className="font-bold">Total:</span>{" "}
       <motion.span

@@ -4,7 +4,7 @@ import {type SeaCatchImage} from "~/db/records/sea-catches.server";
 
 export function Inventory({seaCatchImages}: {seaCatchImages: SeaCatchImage[]}) {
   return (
-    <div className="col-span-5 border-2 border-gray-900">
+    <div className="col-span-4 border-2 border-gray-900 bg-white px-2">
       <h3>Inventory</h3>
       <InventoryForm seaCatchImages={seaCatchImages} />
     </div>

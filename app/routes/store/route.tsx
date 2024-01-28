@@ -70,7 +70,7 @@ export default function Stores() {
   const {seaCatches, seaCatchImages} = useLoaderData<typeof loader>();
   return (
     <section className="my-10 flex flex-1 flex-col ">
-      <div className="grid  flex-1  grid-cols-1 md:grid-cols-12">
+      <div className="grid flex-1 grid-cols-1 md:grid-cols-12">
         <SeaCatchesSection seaCatches={seaCatches} />
         <Orders>
           <Outlet />

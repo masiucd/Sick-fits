@@ -4,9 +4,9 @@ import {type SeaCatch} from "~/db/records/sea-catches.server";
 
 export function SeaCatchesSection({seaCatches}: {seaCatches: SeaCatch[]}) {
   return (
-    <div className="col-span-4 max-h-[95dvh] overflow-y-scroll border-2 border-gray-900">
+    <div className="col-span-5 max-h-[95dvh] overflow-y-scroll border-2 border-gray-900 bg-white">
       <div className="my-10 text-center">
-        <h1 className="mb-5 text-pretty text-6xl font-semibold capitalize leading-[2cm] tracking-tighter">
+        <h1 className="mb-5 text-pretty text-6xl font-semibold capitalize leading-[2cm] tracking-tight">
           Catch
           <span className="relative mx-2  bg-anchor bg-cover bg-center bg-no-repeat px-10 py-5">
             <span className="absolute left-[-25%] top-[35%] h-full w-full bg-cover bg-center text-xl tracking-normal text-primary-500">
@@ -18,7 +18,7 @@ export function SeaCatchesSection({seaCatches}: {seaCatches: SeaCatch[]}) {
           </span>
           day
         </h1>
-        <p className="relative text-center text-base font-semibold uppercase tracking-tighter text-primary-500 before:absolute before:left-[4%] before:top-1/2 before:h-[2px]   before:w-7 before:bg-gray-800 before:content-[''] after:absolute after:right-[3%] after:top-1/2 after:h-[2px]   after:w-7 after:bg-gray-800 after:content-['']">
+        <p className="relative text-center text-base font-semibold uppercase tracking-tighter text-primary-500 before:absolute before:left-[12%] before:top-1/2 before:h-[2px]   before:w-7 before:bg-gray-800 before:content-[''] after:absolute after:right-[12%] after:top-1/2 after:h-[2px]   after:w-7 after:bg-gray-800 after:content-['']">
           We have the freshest fish in the world
         </p>
       </div>
@@ -35,8 +35,8 @@ function SeaCatchCard({seaCatch}: {seaCatch: SeaCatch}) {
   const fetcher = useFetcher();
 
   return (
-    <li className="flex gap-2 bg-gray-100 shadow-sm ">
-      <div className="flex-1 border border-red-400">
+    <li className="relative flex  gap-2 border-y-2 border-gray-900/60 px-2  py-5 shadow-sm after:absolute after:bottom-1 after:left-1/4 after:h-[1px] after:w-[50%] after:bg-slate-900 after:content-['']">
+      <div className="flex-1 ">
         <img
           src={`/images/${seaCatch.image || seaCatch.name}.jpg`}
           alt={seaCatch.name}
