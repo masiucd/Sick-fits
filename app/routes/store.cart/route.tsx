@@ -5,6 +5,7 @@ import {type ActionFunctionArgs} from "@remix-run/node";
 import {deleteOrder, getOrderItems} from "~/biz/orders/impl.server";
 import {OrderItem, OrdersSchema} from "~/db/records/orders.server";
 import {addToCart} from "~/biz/sea-catches/impl.server";
+import {cn} from "~/lib/cn";
 
 export async function action({request}: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -65,7 +66,12 @@ const variants = {
 function CartItem({item, qty}: {item: OrderItem; qty: number}) {
   const fetcher = useFetcher();
   return (
-    <li className="flex min-h-10 items-center justify-between  border-b border-gray-700  px-3 py-2 text-sm text-gray-600">
+    // animate-fade-right animate-once animate-duration-200 animate-ease-linear
+    <li
+      className={cn(
+        "flex min-h-10 items-center justify-between  border-b border-gray-700  px-3 py-2 text-sm text-gray-600",
+      )}
+    >
       <fetcher.Form className="flex gap-2" method="post">
         <input type="hidden" name="sea-catch-id" value={item.catch_id} />
         <input type="hidden" name="cart-item-id" value={item.id} />
