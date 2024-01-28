@@ -45,9 +45,7 @@ function SeaCatchCard({seaCatch}: {seaCatch: SeaCatch}) {
         />
       </div>
       <div className="flex flex-[2] flex-col gap-1">
-        <p className="">
-          <span className="text-xl font-bold">{seaCatch.name}</span>
-        </p>
+        <p className="text-xl font-bold uppercase">{seaCatch.name}</p>
         <p>
           {seaCatch.price.toLocaleString("en-US", {
             style: "currency",

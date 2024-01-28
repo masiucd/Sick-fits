@@ -75,7 +75,7 @@ export default function Stores() {
         <Orders>
           <Outlet />
         </Orders>
-        <Inventory seaCatchImages={seaCatchImages} />
+        <Inventory seaCatches={seaCatches} seaCatchImages={seaCatchImages} />
       </div>
     </section>
   );

@@ -1,17 +1,37 @@
 import {useFetcher} from "@remix-run/react";
 import {useEffect, useRef} from "react";
-import {type SeaCatchImage} from "~/db/records/sea-catches.server";
+import {SeaCatch, type SeaCatchImage} from "~/db/records/sea-catches.server";
 
-export function Inventory({seaCatchImages}: {seaCatchImages: SeaCatchImage[]}) {
+type Props = {
+  seaCatches: SeaCatch[];
+  seaCatchImages: SeaCatchImage[];
+};
+
+export function Inventory({seaCatchImages, seaCatches}: Props) {
   return (
-    <div className="col-span-4 border-2 border-gray-900 bg-white px-2">
+    <div className="col-span-4 max-h-[95dvh] overflow-y-scroll border-2 border-gray-900 bg-white px-2 ">
       <h3>Inventory</h3>
       <InventoryForm seaCatchImages={seaCatchImages} />
+      <ul className="flex flex-col gap-5">
+        {seaCatches.map((seaCatch) => (
+          <InventoryForm
+            key={seaCatch.id}
+            seaCatch={seaCatch}
+            seaCatchImages={seaCatchImages}
+          />
+        ))}
+      </ul>
     </div>
   );
 }
 
-function InventoryForm({seaCatchImages}: {seaCatchImages: SeaCatchImage[]}) {
+function InventoryForm({
+  seaCatchImages,
+  seaCatch,
+}: {
+  seaCatchImages: SeaCatchImage[];
+  seaCatch?: SeaCatch;
+}) {
   const fetcher = useFetcher({key: "inventory"});
   const ref = useRef<HTMLFormElement | null>(null);
 
@@ -21,9 +41,10 @@ function InventoryForm({seaCatchImages}: {seaCatchImages: SeaCatchImage[]}) {
       (ref.current.elements.namedItem("name") as HTMLElement)?.focus();
     }
   }, [fetcher.data, fetcher.state]);
+
   return (
     <fetcher.Form method="post" ref={ref}>
-      <fieldset className="flex flex-col gap-2">
+      <fieldset className="flex flex-col gap-2 border border-gray-800 p-2 text-sm">
         <div className="flex flex-col border-2 md:flex-row">
           <div className="flex flex-1 flex-col">
             <label htmlFor="name">Name</label>
@@ -87,10 +108,10 @@ function InventoryForm({seaCatchImages}: {seaCatchImages: SeaCatchImage[]}) {
           </div>
         </div>
         <button
-          className="rounded bg-primary-500 px-4 py-2 font-bold text-white hover:bg-primary-700"
+          className="rounded-sm border border-gray-800 px-1 py-2 font-bold hover:bg-gray-900 hover:text-gray-50"
           type="submit"
         >
-          Add SeaCatch
+          {seaCatch ? "Remove" : "Add SeaCatch"}
         </button>
       </fieldset>
     </fetcher.Form>
