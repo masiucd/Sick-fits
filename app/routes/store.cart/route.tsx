@@ -1,9 +1,9 @@
-import {Link, useFetcher, useLoaderData} from "@remix-run/react";
-import {motion} from "framer-motion";
+import {Link, useLoaderData} from "@remix-run/react";
+import {AnimatePresence, motion} from "framer-motion";
 import {type ActionFunctionArgs} from "@remix-run/node";
 
 import {deleteOrder, getOrderItems} from "~/biz/orders/impl.server";
-import {OrderItem, OrdersSchema} from "~/db/records/orders.server";
+import {CartItem, OrderItem, OrdersSchema} from "~/db/records/orders.server";
 import {addToCart} from "~/biz/sea-catches/impl.server";
 import {cn} from "~/lib/cn";
 
@@ -30,7 +30,7 @@ export async function action({request}: ActionFunctionArgs) {
 
 export async function loader() {
   let ordersList = OrdersSchema.parse(await getOrderItems());
-  let groupedOrders = groupOrderItems(ordersList);
+  let groupedOrders = groupOrderItemsV2(ordersList);
   let total = ordersList.reduce((total, order) => {
     return total + order.price;
   }, 0);
@@ -45,10 +45,31 @@ export default function Cart() {
   return (
     <div className="bg-white px-2">
       <ul className="mb-2 flex flex-col gap-2 ">
-        {Object.keys(orders).map((key) => {
-          let {item, qty} = orders[key];
-          return <CartItem key={item.id} item={item} qty={qty} />;
-        })}
+        <AnimatePresence>
+          {orders.map((cartItem) => (
+            <motion.li
+              key={cartItem.id}
+              className="flex items-center justify-between border-b border-gray-700 text-gray-900"
+              initial={{opacity: 0, height: 0, x: -10}}
+              animate={{opacity: 1, height: "auto", x: 0}}
+              exit={{
+                opacity: 0,
+                height: 0,
+                x: -10,
+                transition: {
+                  duration: 0.1,
+                },
+              }}
+              transition={{
+                duration: 0.2,
+                type: "tween",
+              }}
+              layout
+            >
+              {cartItem.name}
+            </motion.li>
+          ))}
+        </AnimatePresence>
       </ul>
       <div className="space-y-1">
         <Checkout />
@@ -58,55 +79,37 @@ export default function Cart() {
   );
 }
 
-let variants = {
-  hidden: {opacity: 0, scale: 0},
-  visible: {opacity: 1, scale: 1},
-};
-
-function CartItem({item, qty}: {item: OrderItem; qty: number}) {
-  let fetcher = useFetcher();
-  return (
-    // animate-fade-right animate-once animate-duration-200 animate-ease-linear
-    <li
-      className={cn(
-        "flex min-h-10 items-center justify-between  border-b border-gray-700  px-3 py-2 text-sm text-gray-600",
-      )}
-    >
-      <fetcher.Form className="flex gap-2" method="post">
-        <input type="hidden" name="sea-catch-id" value={item.catch_id} />
-        <input type="hidden" name="cart-item-id" value={item.id} />
-        <span className="flex items-center gap-1">
-          <button type="submit" name="_action" value="decrease-qty">
-            <span>&larr;</span>
-          </button>
-          <motion.span
-            variants={variants}
-            initial="hidden"
-            animate="visible"
-            transition={{duration: 0.2, type: "spring"}}
-          >
-            {qty}
-          </motion.span>
-          <button type="submit" name="_action" value="increase-qty">
-            <span>&rarr;</span>
-          </button>
-        </span>
-        <p className="text-balance font-semibold  capitalize">{item.name}</p>
-      </fetcher.Form>
-      <motion.span
-        variants={variants}
-        initial="hidden"
-        animate="visible"
-        transition={{duration: 0.2, type: "spring"}}
-      >
-        {(item.price * qty).toLocaleString("en-US", {
-          style: "currency",
-          currency: "USD",
-        })}
-      </motion.span>
-    </li>
-  );
-}
+// function CartItem({item, qty}: {item: OrderItem; qty: number}) {
+//   return (
+//     <motion.li
+//       className={cn(
+//         "flex min-h-10 items-center justify-between  border-b border-gray-700   text-sm text-gray-600",
+//       )}
+//       initial={{opacity: 0, height: 0, x: -10}}
+//       animate={{opacity: 1, height: "auto", x: 0}}
+//       exit={{
+//         opacity: 0,
+//         height: 0,
+//         x: -10,
+//         transition: {
+//           duration: 0.1,
+//         },
+//       }}
+//       transition={{
+//         duration: 0.2,
+//         type: "tween",
+//       }}
+//       layout
+//     >
+//       <span>
+//         {(item.price * qty).toLocaleString("en-US", {
+//           style: "currency",
+//           currency: "USD",
+//         })}
+//       </span>
+//     </motion.li>
+//   );
+// }
 
 function Checkout() {
   return (
@@ -129,16 +132,12 @@ function Total({total}: {total: number}) {
           before:content-[''] after:absolute after:inset-0 after:bottom-[0]  after:z-[-1]  after:w-full after:border-b-2 after:border-gray-900 after:content-['']"
     >
       <span className="font-bold">Total:</span>{" "}
-      <motion.span
-        initial={{scale: 0}}
-        animate={{scale: 1}}
-        transition={{duration: 0.5, type: "spring"}}
-      >
+      <span>
         {total.toLocaleString("en-US", {
           style: "currency",
           currency: "USD",
         })}
-      </motion.span>
+      </span>
     </div>
   );
 }
@@ -156,4 +155,17 @@ function groupOrderItems(
     },
     {} as Record<string, {qty: number; item: OrderItem}>,
   );
+}
+
+function groupOrderItemsV2(orderItems: OrderItem[]) {
+  let result: CartItem[] = [];
+  for (let item of orderItems) {
+    let foundItem = result.find((i) => i.catch_id === item.catch_id);
+    if (foundItem) {
+      foundItem.quantity++;
+    } else {
+      result.push({...item, quantity: 1});
+    }
+  }
+  return result;
 }

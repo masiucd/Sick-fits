@@ -12,6 +12,8 @@ let OrderItemSchema = z.object({
 export let OrdersSchema = z.array(OrderItemSchema);
 export type OrderItem = z.infer<typeof OrderItemSchema>;
 
+export type CartItem = OrderItem & {quantity: number};
+
 export let Orders = sqliteTable("orders", {
   id: integer("id"),
   catch_id: integer("catch_id"),
