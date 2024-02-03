@@ -32,8 +32,8 @@ function InventoryForm({
   seaCatchImages: SeaCatchImage[];
   seaCatch?: SeaCatch;
 }) {
-  const fetcher = useFetcher({key: "inventory"});
-  const ref = useRef<HTMLFormElement | null>(null);
+  let fetcher = useFetcher({key: "inventory"});
+  let ref = useRef<HTMLFormElement | null>(null);
 
   useEffect(() => {
     if (ref.current && fetcher.data && fetcher.state === "idle") {

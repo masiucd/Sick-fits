@@ -14,7 +14,7 @@ import {
   getSeaCatches,
 } from "~/biz/sea-catches/impl.server";
 
-export const meta: MetaFunction = () => {
+export let meta: MetaFunction = () => {
   return [
     {title: "SeaCatch of today"},
     {name: "description", content: "SeaCatch of today is a fish market app 🐟"},
@@ -22,22 +22,22 @@ export const meta: MetaFunction = () => {
 };
 
 export async function action({request}: ActionFunctionArgs) {
-  const formData = await request.formData();
-  const action = formData.get("_action");
+  let formData = await request.formData();
+  let action = formData.get("_action");
 
   if (action === "add-to-cart") {
-    const seaCathId = formData.get("sea-catch-id");
+    let seaCathId = formData.get("sea-catch-id");
     if (typeof seaCathId !== "string") {
       return new Response("Invalid form data", {status: 400});
     }
     return await addToCart(Number(seaCathId));
   } else {
-    const name = formData.get("name");
-    const species = formData.get("species");
-    const description = formData.get("description");
-    const image = formData.get("image");
-    const state = formData.get("state");
-    const price = formData.get("price");
+    let name = formData.get("name");
+    let species = formData.get("species");
+    let description = formData.get("description");
+    let image = formData.get("image");
+    let state = formData.get("state");
+    let price = formData.get("price");
     if (
       typeof name !== "string" ||
       typeof species !== "string" ||
@@ -67,7 +67,7 @@ export async function loader() {
 }
 
 export default function Stores() {
-  const {seaCatches, seaCatchImages} = useLoaderData<typeof loader>();
+  let {seaCatches, seaCatchImages} = useLoaderData<typeof loader>();
   return (
     <section className="my-10 flex flex-1 flex-col ">
       <div className="grid flex-1 grid-cols-1 md:grid-cols-12">

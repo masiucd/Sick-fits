@@ -1,7 +1,7 @@
 import {text, integer, sqliteTable} from "drizzle-orm/sqlite-core";
 import {z} from "zod";
 
-export const SeaCatchSchema = z.object({
+export let SeaCatchSchema = z.object({
   id: z.number(),
   name: z.string(),
   species: z.string(),
@@ -13,9 +13,9 @@ export const SeaCatchSchema = z.object({
 });
 
 export type SeaCatch = z.infer<typeof SeaCatchSchema>;
-export const SeaCatchesSchema = z.array(SeaCatchSchema);
+export let SeaCatchesSchema = z.array(SeaCatchSchema);
 
-export const SeaCatches = sqliteTable("sea_catches", {
+export let SeaCatches = sqliteTable("sea_catches", {
   id: integer("id"),
   name: text("name"),
   species: text("species"),
@@ -25,16 +25,16 @@ export const SeaCatches = sqliteTable("sea_catches", {
   created_at: text("created_at"),
 });
 
-export const SeaCatchImageSchema = z.object({
+export let SeaCatchImageSchema = z.object({
   id: z.number(),
   image: z.string(),
 });
 
 export type SeaCatchImage = z.infer<typeof SeaCatchImageSchema>;
 
-export const SeaCatchImagesSchema = z.array(SeaCatchImageSchema);
+export let SeaCatchImagesSchema = z.array(SeaCatchImageSchema);
 
-export const SeaCatchImages = sqliteTable("sea_catch_images", {
+export let SeaCatchImages = sqliteTable("sea_catch_images", {
   id: integer("id"),
   catch_id: integer("catch_id"),
   image: text("image"),

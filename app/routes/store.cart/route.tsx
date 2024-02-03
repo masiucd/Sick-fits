@@ -8,10 +8,10 @@ import {addToCart} from "~/biz/sea-catches/impl.server";
 import {cn} from "~/lib/cn";
 
 export async function action({request}: ActionFunctionArgs) {
-  const formData = await request.formData();
-  const action = formData.get("_action");
+  let formData = await request.formData();
+  let action = formData.get("_action");
   if (action === "decrease-qty") {
-    const cartItemId = formData.get("cart-item-id");
+    let cartItemId = formData.get("cart-item-id");
     if (cartItemId === null) {
       return new Response("Invalid form data", {status: 400});
     }
@@ -19,7 +19,7 @@ export async function action({request}: ActionFunctionArgs) {
     return new Response("OK", {status: 200});
   }
   if (action === "increase-qty") {
-    const seaCathId = formData.get("sea-catch-id");
+    let seaCathId = formData.get("sea-catch-id");
     if (seaCathId === null) {
       return new Response("Invalid form data", {status: 400});
     }
@@ -29,9 +29,9 @@ export async function action({request}: ActionFunctionArgs) {
 }
 
 export async function loader() {
-  const ordersList = OrdersSchema.parse(await getOrderItems());
-  const groupedOrders = groupOrderItems(ordersList);
-  const total = ordersList.reduce((total, order) => {
+  let ordersList = OrdersSchema.parse(await getOrderItems());
+  let groupedOrders = groupOrderItems(ordersList);
+  let total = ordersList.reduce((total, order) => {
     return total + order.price;
   }, 0);
   return {
@@ -41,12 +41,12 @@ export async function loader() {
 }
 
 export default function Cart() {
-  const {orders, total} = useLoaderData<typeof loader>();
+  let {orders, total} = useLoaderData<typeof loader>();
   return (
     <div className="bg-white px-2">
       <ul className="mb-2 flex flex-col gap-2 ">
         {Object.keys(orders).map((key) => {
-          const {item, qty} = orders[key];
+          let {item, qty} = orders[key];
           return <CartItem key={item.id} item={item} qty={qty} />;
         })}
       </ul>
@@ -58,13 +58,13 @@ export default function Cart() {
   );
 }
 
-const variants = {
+let variants = {
   hidden: {opacity: 0, scale: 0},
   visible: {opacity: 1, scale: 1},
 };
 
 function CartItem({item, qty}: {item: OrderItem; qty: number}) {
-  const fetcher = useFetcher();
+  let fetcher = useFetcher();
   return (
     // animate-fade-right animate-once animate-duration-200 animate-ease-linear
     <li

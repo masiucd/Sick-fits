@@ -3,7 +3,7 @@ import {db} from "../db.server";
 import {SeaCatchImages, SeaCatches} from "../records/sea-catches.server";
 
 export function getSeaCatches() {
-  const catches = db
+  let catches = db
     .select({
       id: SeaCatches.id,
       name: SeaCatches.name,
@@ -43,7 +43,7 @@ export async function insertSeaCatch({
   state: string;
   price: string;
 }) {
-  const [{id}] = await db
+  let [{id}] = await db
     .insert(SeaCatches)
     .values({
       name,

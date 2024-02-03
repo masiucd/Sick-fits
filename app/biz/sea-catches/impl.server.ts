@@ -26,7 +26,7 @@ export async function addCatch({
   state: string;
   price: string;
 }) {
-  const id = await insertSeaCatch({
+  let id = await insertSeaCatch({
     name,
     species,
     description,

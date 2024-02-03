@@ -32,7 +32,7 @@ export function SeaCatchesSection({seaCatches}: {seaCatches: SeaCatch[]}) {
 }
 
 function SeaCatchCard({seaCatch}: {seaCatch: SeaCatch}) {
-  const fetcher = useFetcher();
+  let fetcher = useFetcher();
 
   return (
     <li className="relative flex  gap-2 border-y-2 border-gray-900/60 px-2  py-5 shadow-sm after:absolute after:bottom-1 after:left-1/4 after:h-[1px] after:w-[50%] after:bg-slate-900 after:content-['']">
