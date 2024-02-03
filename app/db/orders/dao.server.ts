@@ -28,6 +28,5 @@ export async function getOrderItems() {
       description: SeaCatches.description,
     })
     .from(Orders)
-    .innerJoin(SeaCatches, eq(Orders.catch_id, SeaCatches.id))
-    .orderBy(desc(SeaCatches.created_at));
+    .innerJoin(SeaCatches, eq(Orders.catch_id, SeaCatches.id));
 }
