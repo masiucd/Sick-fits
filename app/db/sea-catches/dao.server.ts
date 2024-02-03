@@ -21,15 +21,6 @@ export function getSeaCatches() {
   return catches;
 }
 
-export async function getImages() {
-  return await db
-    .select({
-      id: SeaCatchImages.id,
-      image: SeaCatchImages.image,
-    })
-    .from(SeaCatchImages);
-}
-
 export async function insertSeaCatch({
   name,
   species,

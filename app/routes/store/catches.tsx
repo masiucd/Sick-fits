@@ -1,11 +1,10 @@
 import {useFetcher} from "@remix-run/react";
-import {format, parseISO} from "date-fns";
 import {type SeaCatch} from "~/db/records/sea-catches.server";
 
 export function SeaCatchesSection({seaCatches}: {seaCatches: SeaCatch[]}) {
   return (
     <div className="col-span-5 max-h-[95dvh] overflow-y-scroll border-2 border-gray-900 bg-white">
-      <div className="my-10 text-center">
+      <div className="mt-10 border-b-2 border-gray-800 pb-10 text-center">
         <h1 className="mb-5 text-pretty text-6xl font-semibold capitalize leading-[2cm] tracking-tight">
           Catch
           <span className="relative mx-2  bg-anchor bg-cover bg-center bg-no-repeat px-10 py-5">
@@ -33,33 +32,31 @@ export function SeaCatchesSection({seaCatches}: {seaCatches: SeaCatch[]}) {
 
 function SeaCatchCard({seaCatch}: {seaCatch: SeaCatch}) {
   let fetcher = useFetcher();
-
   return (
-    <li className="relative flex  gap-2 border-y-2 border-gray-900/60 px-2  py-5 shadow-sm after:absolute after:bottom-1 after:left-1/4 after:h-[1px] after:w-[50%] after:bg-slate-900 after:content-['']">
-      <div className="flex-1 ">
+    <li className="relative flex  gap-2 border-b-2 border-gray-900/60 px-2  py-5 shadow-sm after:absolute after:-bottom-2 after:left-0 after:h-[1px] after:w-full after:bg-slate-900 after:content-['']">
+      <div className="flex-1">
         <img
           src={`/images/${seaCatch.image || seaCatch.name}.jpg`}
           alt={seaCatch.name}
           className="aspect-auto h-full w-full object-contain"
-          // className="aspect-auto h-full w-full object-cover"
         />
       </div>
-      <div className="flex flex-[2] flex-col gap-1">
-        <p className="text-xl font-bold uppercase">{seaCatch.name}</p>
-        <p>
-          {seaCatch.price.toLocaleString("en-US", {
-            style: "currency",
-            currency: "USD",
-          })}
-        </p>
-        <p>{seaCatch.species}</p>
-        <p>{seaCatch.description}</p>
-        <p>{format(parseISO(seaCatch.created_at), "MMMM do, yyyy")}</p>
-        <fetcher.Form method="post">
+      <div className="flex flex-[2] flex-col gap-1 ">
+        <div className="flex justify-between">
+          <p className="text-xl font-bold uppercase">{seaCatch.name}</p>
+          <p>
+            {seaCatch.price.toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+            })}
+          </p>
+        </div>
+        <p className="text-sm">{seaCatch.description}</p>
+        <fetcher.Form method="post" className="mt-auto ">
           <input type="hidden" name="sea-catch-id" value={seaCatch.id} />
           <button
             type="submit"
-            className="w-full border border-gray-900 px-2 py-1 font-semibold transition-colors duration-200 hover:bg-gray-900 hover:text-gray-50"
+            className="w-24 border border-gray-900 px-2 py-1 text-sm font-semibold transition-colors duration-200 hover:bg-gray-900 hover:text-gray-50"
             name="_action"
             value="add-to-cart"
           >

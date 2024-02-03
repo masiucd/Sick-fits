@@ -1,7 +1,6 @@
 import {Link, useFetcher, useLoaderData} from "@remix-run/react";
 import {AnimatePresence, motion} from "framer-motion";
 import {type ActionFunctionArgs} from "@remix-run/node";
-
 import {
   CartItem,
   OrderItem,
