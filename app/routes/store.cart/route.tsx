@@ -1,30 +1,30 @@
-import {Link, useLoaderData} from "@remix-run/react";
+import {Link, useFetcher, useLoaderData} from "@remix-run/react";
 import {AnimatePresence, motion} from "framer-motion";
 import {type ActionFunctionArgs} from "@remix-run/node";
 
-import {deleteOrder, getOrderItems} from "~/biz/orders/impl.server";
-import {CartItem, OrderItem, OrdersSchema} from "~/db/records/orders.server";
-import {addToCart} from "~/biz/sea-catches/impl.server";
-import {cn} from "~/lib/cn";
+import {getOrderItems} from "~/biz/orders/impl.server";
+import {
+  CartItem,
+  OrderItem,
+  Orders,
+  OrdersSchema,
+} from "~/db/records/orders.server";
+import {db} from "~/db/db.server";
+import {eq} from "drizzle-orm";
 
 export async function action({request}: ActionFunctionArgs) {
   let formData = await request.formData();
   let action = formData.get("_action");
-  if (action === "decrease-qty") {
-    let cartItemId = formData.get("cart-item-id");
-    if (cartItemId === null) {
+  if (action === "delete-order-item") {
+    let catchId = formData.get("catch-id");
+
+    if (catchId === null) {
       return new Response("Invalid form data", {status: 400});
     }
-    await deleteOrder(Number(cartItemId));
+    await db.delete(Orders).where(eq(Orders.catch_id, Number(catchId)));
     return new Response("OK", {status: 200});
   }
-  if (action === "increase-qty") {
-    let seaCathId = formData.get("sea-catch-id");
-    if (seaCathId === null) {
-      return new Response("Invalid form data", {status: 400});
-    }
-    return await addToCart(Number(seaCathId));
-  }
+
   return null;
 }
 
@@ -42,6 +42,7 @@ export async function loader() {
 
 export default function Cart() {
   let {orders, total} = useLoaderData<typeof loader>();
+  let fetcher = useFetcher();
   return (
     <div className="bg-white px-2">
       <ul className="mb-2 flex flex-col gap-2 ">
@@ -66,7 +67,33 @@ export default function Cart() {
               }}
               layout
             >
-              {cartItem.name}
+              <div className="flex gap-1">
+                <span>{cartItem.name}</span>
+                <span>
+                  {(cartItem.price * cartItem.quantity).toLocaleString(
+                    "en-US",
+                    {
+                      style: "currency",
+                      currency: "USD",
+                    },
+                  )}
+                </span>
+              </div>
+              <fetcher.Form method="post">
+                <button
+                  type="submit"
+                  name="_action"
+                  value="delete-order-item"
+                  className="bg-gray-700 px-2 py-1 text-gray-100"
+                >
+                  Delete
+                </button>
+                <input
+                  type="hidden"
+                  name="catch-id"
+                  value={cartItem.catch_id}
+                />
+              </fetcher.Form>
             </motion.li>
           ))}
         </AnimatePresence>
@@ -139,21 +166,6 @@ function Total({total}: {total: number}) {
         })}
       </span>
     </div>
-  );
-}
-
-function groupOrderItems(
-  orderItems: OrderItem[],
-): Record<string, {qty: number; item: OrderItem}> {
-  return orderItems.reduce(
-    (acc, item) => {
-      acc[item.name] = {
-        qty: (acc[item.name]?.qty || 0) + 1,
-        item,
-      };
-      return acc;
-    },
-    {} as Record<string, {qty: number; item: OrderItem}>,
   );
 }
 
