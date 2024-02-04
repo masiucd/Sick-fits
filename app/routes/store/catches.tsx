@@ -1,4 +1,5 @@
 import {useFetcher} from "@remix-run/react";
+import {AppTitle} from "~/components/app-title";
 import {type SeaCatch} from "~/db/records/sea-catches.server";
 import {cn} from "~/lib/cn";
 
@@ -6,18 +7,7 @@ export function SeaCatchesSection({seaCatches}: {seaCatches: SeaCatch[]}) {
   return (
     <>
       <div className="mt-10 border-b-2 border-gray-800 pb-10 text-center">
-        <h1 className="mb-5 text-pretty text-6xl font-semibold capitalize leading-[2cm] tracking-tight">
-          Catch
-          <span className="relative mx-2  bg-anchor bg-cover bg-center bg-no-repeat px-10 py-5">
-            <span className="absolute left-[-25%] top-[35%] h-full w-full bg-cover bg-center text-xl tracking-normal text-primary-500">
-              of
-            </span>
-            <span className="absolute right-[-30%] top-[35%] h-full w-full bg-cover bg-center text-xl tracking-normal text-primary-500">
-              the
-            </span>
-          </span>
-          day
-        </h1>
+        <AppTitle />
         <p className="relative text-center text-base font-semibold uppercase tracking-tighter text-primary-500 before:absolute before:left-[10%] before:top-1/2 before:h-[2px]   before:w-7 before:bg-gray-800 before:content-[''] after:absolute after:right-[10%] after:top-1/2 after:h-[2px]   after:w-7 after:bg-gray-800 after:content-['']">
           We have the freshest fish in the world
         </p>
