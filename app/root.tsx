@@ -21,7 +21,7 @@ export default function App() {
         <Links />
       </head>
       <body className="bg-gray-200 font-sans text-gray-900">
-        <main className="flex min-h-dvh flex-col">
+        <main className="flex min-h-dvh  flex-col">
           <Outlet />
         </main>
         <ScrollRestoration />

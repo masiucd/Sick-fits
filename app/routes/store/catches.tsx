@@ -1,5 +1,6 @@
 import {useFetcher} from "@remix-run/react";
 import {type SeaCatch} from "~/db/records/sea-catches.server";
+import {cn} from "~/lib/cn";
 
 export function SeaCatchesSection({seaCatches}: {seaCatches: SeaCatch[]}) {
   return (
@@ -30,10 +31,26 @@ export function SeaCatchesSection({seaCatches}: {seaCatches: SeaCatch[]}) {
   );
 }
 
+function SoldOut({isDisabled}: {isDisabled: boolean}) {
+  if (!isDisabled) return null;
+  return (
+    <div className=" absolute left-16 z-20 rotate-12 border-2 border-red-500 bg-white px-2 py-1 text-center font-bold uppercase  tracking-tight md:w-44  md:text-xl">
+      <p>Sold out!</p>
+    </div>
+  );
+}
+
 function SeaCatchCard({seaCatch}: {seaCatch: SeaCatch}) {
   let fetcher = useFetcher();
+  let isDisabled = seaCatch.state === "sold-out";
   return (
-    <li className="relative flex h-32  gap-2 border-b-2 border-gray-900/60 px-2  py-5 shadow-sm after:absolute after:-bottom-2 after:left-0 after:h-[1px] after:w-full after:bg-slate-900 after:content-['']">
+    <li
+      className={cn(
+        "relative flex h-32  gap-2 border-b-2 border-gray-900/60 px-2  py-5 shadow-sm after:absolute after:-bottom-2 after:left-0 after:h-[1px] after:w-full after:bg-slate-900 after:content-['']",
+        isDisabled && "opacity-80",
+      )}
+    >
+      <SoldOut isDisabled={isDisabled} />
       <div className="flex-1">
         <img
           src={`/images/${seaCatch.image}.jpg`}
@@ -58,9 +75,10 @@ function SeaCatchCard({seaCatch}: {seaCatch: SeaCatch}) {
           <input type="hidden" name="sea-catch-id" value={seaCatch.id} />
           <button
             type="submit"
-            className="w-24 border border-gray-900 px-2 py-1 text-sm font-semibold transition-colors duration-200 hover:bg-gray-900 hover:text-gray-50"
+            className="w-24 border border-gray-900 px-2 py-1 text-sm font-semibold transition-colors duration-200 hover:bg-gray-900 hover:text-gray-50 disabled:hover:bg-gray-50 disabled:hover:text-gray-900"
             name="_action"
             value="add-to-cart"
+            disabled={isDisabled}
           >
             Add to cart
           </button>
