@@ -18,7 +18,7 @@ export function SeaCatchesSection({seaCatches}: {seaCatches: SeaCatch[]}) {
           </span>
           day
         </h1>
-        <p className="relative text-center text-base font-semibold uppercase tracking-tighter text-primary-500 before:absolute before:left-[12%] before:top-1/2 before:h-[2px]   before:w-7 before:bg-gray-800 before:content-[''] after:absolute after:right-[12%] after:top-1/2 after:h-[2px]   after:w-7 after:bg-gray-800 after:content-['']">
+        <p className="relative text-center text-base font-semibold uppercase tracking-tighter text-primary-500 before:absolute before:left-[10%] before:top-1/2 before:h-[2px]   before:w-7 before:bg-gray-800 before:content-[''] after:absolute after:right-[10%] after:top-1/2 after:h-[2px]   after:w-7 after:bg-gray-800 after:content-['']">
           We have the freshest fish in the world
         </p>
       </div>
@@ -75,12 +75,14 @@ function SeaCatchCard({seaCatch}: {seaCatch: SeaCatch}) {
           <input type="hidden" name="sea-catch-id" value={seaCatch.id} />
           <button
             type="submit"
-            className="w-24 border border-gray-900 px-2 py-1 text-sm font-semibold transition-colors duration-200 hover:bg-gray-900 hover:text-gray-50 disabled:hover:bg-gray-50 disabled:hover:text-gray-900"
+            className="group relative w-32 border border-gray-900 px-2 py-1 text-sm font-semibold shadow transition-colors duration-200 after:absolute after:left-0 after:top-0 after:h-0 after:w-full after:bg-gray-900 after:text-gray-50 after:transition-all after:duration-300 after:content-[''] after:hover:h-full disabled:pointer-events-none   disabled:shadow-none  disabled:hover:bg-gray-50 disabled:hover:text-gray-900"
             name="_action"
             value="add-to-cart"
             disabled={isDisabled}
           >
-            Add to cart
+            <span className="relative z-10 group-hover:text-white">
+              Add to cart
+            </span>
           </button>
         </fetcher.Form>
       </div>

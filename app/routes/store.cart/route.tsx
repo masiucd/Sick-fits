@@ -131,25 +131,8 @@ export default function Cart() {
         </AnimatePresence>
       </ul>
       <div className="space-y-1">
-        <Checkout disabled={orders.length === 0} />
         <Total total={total} />
       </div>
-    </div>
-  );
-}
-
-function Checkout({disabled}: {disabled: boolean}) {
-  return (
-    <div className="flex justify-end">
-      <Link
-        className={cn(
-          "border-2 border-gray-600 bg-gray-700 px-2 py-1 text-gray-100 transition-colors hover:bg-gray-50 hover:text-gray-900",
-          disabled && "pointer-events-none opacity-50",
-        )}
-        to="/checkout"
-      >
-        Checkout
-      </Link>
     </div>
   );
 }
