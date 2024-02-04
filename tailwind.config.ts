@@ -1,5 +1,6 @@
 import type {Config} from "tailwindcss";
 import colors from "tailwindcss/colors";
+import theme from "tailwindcss/defaultTheme";
 
 export default {
   content: ["./app/**/*.{js,jsx,ts,tsx}"],
@@ -11,6 +12,9 @@ export default {
       },
       backgroundImage: {
         anchor: "url('/images/anchor.svg')",
+      },
+      fontFamily: {
+        sans: ["Haymaker", ...theme.fontFamily.sans],
       },
     },
   },

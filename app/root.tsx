@@ -9,7 +9,11 @@ import {
 } from "@remix-run/react";
 import styles from "./tailwind.css";
 
-export let links: LinksFunction = () => [{rel: "stylesheet", href: styles}];
+export let links: LinksFunction = () => [
+  {rel: "stylesheet", href: styles},
+  {rel: "stylesheet", href: "/fonts/haymaker.css"},
+  {rel: "stylesheet", href: "/fonts/blanch_caps_inline.css"},
+];
 
 export default function App() {
   return (
