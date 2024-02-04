@@ -34,11 +34,17 @@ export default function Stores() {
   return (
     <section className="my-10 flex flex-1 flex-col ">
       <div className="grid flex-1 grid-cols-1 md:grid-cols-12">
-        <SeaCatchesSection seaCatches={seaCatches} />
-        <OrdersComponent>
-          <Outlet />
-        </OrdersComponent>
-        <Inventory seaCatches={seaCatches} seaCatchImages={seaCatchImages} />
+        <div className="col-span-5 max-h-[95dvh] overflow-y-scroll border-2 border-gray-900 bg-white">
+          <SeaCatchesSection seaCatches={seaCatches} />
+        </div>
+        <div className="col-span-3 border-2 border-gray-900 bg-white px-2">
+          <OrdersComponent>
+            <Outlet />
+          </OrdersComponent>
+        </div>
+        <div className="col-span-4 max-h-[95dvh] overflow-y-scroll border-2 border-gray-900 bg-white px-4  ">
+          <Inventory seaCatches={seaCatches} seaCatchImages={seaCatchImages} />
+        </div>
       </div>
     </section>
   );

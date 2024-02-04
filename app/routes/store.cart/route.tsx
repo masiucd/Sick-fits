@@ -1,4 +1,4 @@
-import {Link, useFetcher, useLoaderData} from "@remix-run/react";
+import {useFetcher, useLoaderData} from "@remix-run/react";
 import {AnimatePresence, motion} from "framer-motion";
 import {type ActionFunctionArgs} from "@remix-run/node";
 import {
@@ -10,7 +10,6 @@ import {
 import {db} from "~/db/db.server";
 import {eq} from "drizzle-orm";
 import {SeaCatches} from "~/db/records/sea-catches.server";
-import {cn} from "~/lib/cn";
 
 export async function action({request}: ActionFunctionArgs) {
   let formData = await request.formData();

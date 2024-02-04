@@ -4,7 +4,7 @@ import {cn} from "~/lib/cn";
 
 export function SeaCatchesSection({seaCatches}: {seaCatches: SeaCatch[]}) {
   return (
-    <div className="col-span-5 max-h-[95dvh] overflow-y-scroll border-2 border-gray-900 bg-white">
+    <>
       <div className="mt-10 border-b-2 border-gray-800 pb-10 text-center">
         <h1 className="mb-5 text-pretty text-6xl font-semibold capitalize leading-[2cm] tracking-tight">
           Catch
@@ -27,7 +27,7 @@ export function SeaCatchesSection({seaCatches}: {seaCatches: SeaCatch[]}) {
           <SeaCatchCard key={seaCatch.id} seaCatch={seaCatch} />
         ))}
       </ul>
-    </div>
+    </>
   );
 }
 
