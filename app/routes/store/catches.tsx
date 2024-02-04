@@ -33,25 +33,27 @@ export function SeaCatchesSection({seaCatches}: {seaCatches: SeaCatch[]}) {
 function SeaCatchCard({seaCatch}: {seaCatch: SeaCatch}) {
   let fetcher = useFetcher();
   return (
-    <li className="relative flex  gap-2 border-b-2 border-gray-900/60 px-2  py-5 shadow-sm after:absolute after:-bottom-2 after:left-0 after:h-[1px] after:w-full after:bg-slate-900 after:content-['']">
+    <li className="relative flex h-32  gap-2 border-b-2 border-gray-900/60 px-2  py-5 shadow-sm after:absolute after:-bottom-2 after:left-0 after:h-[1px] after:w-full after:bg-slate-900 after:content-['']">
       <div className="flex-1">
         <img
-          src={`/images/${seaCatch.image || seaCatch.name}.jpg`}
+          src={`/images/${seaCatch.image}.jpg`}
           alt={seaCatch.name}
-          className="aspect-auto h-full w-full object-contain"
+          className="aspect-auto h-full w-32 object-contain"
         />
       </div>
       <div className="flex flex-[2] flex-col gap-1 ">
         <div className="flex justify-between">
-          <p className="text-xl font-bold uppercase">{seaCatch.name}</p>
-          <p>
+          <p className="text-2xl font-bold uppercase tracking-tight md:text-xl">
+            {seaCatch.name}
+          </p>
+          <p className="text-2xl font-bold uppercase tracking-tight md:text-xl">
             {seaCatch.price.toLocaleString("en-US", {
               style: "currency",
               currency: "USD",
             })}
           </p>
         </div>
-        <p className="text-sm">{seaCatch.description}</p>
+        <p className="truncate text-sm">{seaCatch.description}</p>
         <fetcher.Form method="post" className="mt-auto ">
           <input type="hidden" name="sea-catch-id" value={seaCatch.id} />
           <button
